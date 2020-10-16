@@ -39,6 +39,16 @@ class main(tk.Frame):
         d = modal(root, "general")
         root.wait_window(d.top)
 
+class erreurPopup:
+    def __init__(self, parent, message ):
+ 
+        self.top = tk.Toplevel(parent)
+        self.top.transient(parent)
+        self.top.grab_set()
+        self.top.geometry("250x50")
+        self.label = tk.Label(self.top, text=message)
+        self.label.pack()
+
 class modal:
     def __init__(self, parent, typebac ):
  
@@ -47,26 +57,54 @@ class modal:
         self.top.grab_set()
         self.top.geometry("400x600")
         
-        self.tblmoyennecc = ["Moyenne 1er semestre en Première", "Moyenne 2nd semestre en Première","Moyenne 1er semestre en Terminale", "Moyenne 2nd semestre en Terminale"]
+        self.tblentry = [
+            {"Text" : "Moyenne 1er semestre en Première", "Coeficiant" : 2.5},
+            {"Text" : "Moyenne 2nd semestre en Première", "Coeficiant" : 2.5},
+            {"Text" : "Moyenne 1er semestre en Terminale", "Coeficiant" : 2.5},
+            {"Text" : "Moyenne 2nd semestre en Terminale", "Coeficiant" : 2.5},
+            {"Text" : "Note Histoire E3C 1ère", "Coeficiant" : 2.5},
+            {"Text" : "Note Histoire E3C Terminale", "Coeficiant" : 2.5},
+            {"Text" : "Note Enseingement Scientifique E3C 1ère", "Coeficiant" : 2.5},
+            {"Text" : "Note Enseingement Scientifique E3C Terminale", "Coeficiant" : 2.5},
+            {"Text" : "Note LV1 E3C 1ère", "Coeficiant" : 2.5},
+            {"Text" : "Note LV1 E3C Terminale", "Coeficiant" : 2.5},
+            {"Text" : "Note LV2 E3C 1ère", "Coeficiant" : 2.5},
+            {"Text" : "Note LV2 E3C Terminale", "Coeficiant" : 2.5},
+            {"Text" : "Note Spécialité 1ère", "Coeficiant" : 5},
+            {"Text" : "Note EPS Terminale", "Coeficiant" : 5},
+            {"Text" : "Note Français Oral", "Coeficiant" : 5},
+            {"Text" : "Note Français Ecrit", "Coeficiant" : 5},
+            {"Text" : "Note Spécialité 1 Terminale", "Coeficiant" : 16},
+            {"Text" : "Note Spécialité 2 Terminale", "Coeficiant" : 16},
+            {"Text" : "Note Philosophie", "Coeficiant" : 8},
+            {"Text" : "Note Grand Oral", "Coeficiant" : 8},
+            ]
         
-        self.labelmoyennecc, self.entrymoyennecc = [0]*len(self.tblmoyennecc), [0]*len(self.tblmoyennecc)
-        
-        for i in range(0, len(self.tblmoyennecc)):
-            self.labelmoyennecc[i] = tk.Label(self.top, text=self.tblmoyennecc[i])
-            self.labelmoyennecc[i].grid(column=0, row= i)
-            self.entrymoyennecc[i] = numEntry(self.top)
-            self.entrymoyennecc[i].grid(column=1, row = i)
-            
+        self.labelentry, self.entry = [0]*len(self.tblentry), [0]*len(self.tblentry)
+
+        for i in range(0, len(self.tblentry)):
+            tbl = self.tblentry[i]
+            self.labelentry[i] = tk.Label(self.top, text=tbl["Text"])
+            self.labelentry[i].grid(column=0, row= i)
+            self.entry[i] = numEntry(self.top)
+            self.entry[i].coef = tbl["Coeficiant"]
+            self.entry[i].grid(column=1, row = i)
+
         self.ValidButton = tk.Button(self.top, text="Valider",command=self.Valid)
-        self.ValidButton.grid(row= 5)
+        self.ValidButton.grid(row=20)
             
     def Valid(self):
-        notescc = 0
-        for i in range(0, len(self.tblmoyennecc)):       
-            notescc += int(self.entrymoyennecc[i].get())
-        notescc /= len(self.tblmoyennecc)
+        tblfinal = []
+        for i in range(0, len(self.tblentry)):
+            entry = self.entry[i]
+            if (entry.get() != ""):
+                tblfinal.append({ "Coeficiant": entry.coef, "Note": int(entry.get())})
+            else:
+                d = erreurPopup(root, "Vous n'avez pas entrer toutes les valeurs")
+                self.wait_window(d.top)
+                break
 
-        print(notescc)
+        print(tblfinal)
             
     def cancel(self, event=None):
         self.top.destroy()
